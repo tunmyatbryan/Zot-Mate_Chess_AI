@@ -6,7 +6,7 @@ file. After installing and starting the game, the general board layout will pop 
 allowed to type and play the game. Any questions regarding the game of chess, or a more elaborate
 understanding of our chess software can be found in our Chess_Usermanual.pdf inside the doc
 directory. The sourse code can be found in the src directory. Any questions regarding the source code,
-or a more elaborate understanding of the code can be found in the Software_Specs.pdf in the doc 
+or a more elaborate understanding of the code can be found in the Software_Specification.pdf and User_Manual.pdf in the doc 
 directory. Any concerns regarding legal matters can be found in our COPYRIGHT.txt file. 
 Enjoy our chess Program.
 
