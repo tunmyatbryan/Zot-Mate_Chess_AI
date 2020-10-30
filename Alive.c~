@@ -1,0 +1,126 @@
+#include <stdlib.h>
+#include <assert.h>
+#include "Alive.h"
+#include "chessLayout.c"
+
+/*Create a new Alive List*/
+
+ALIST *CreateAliveList()
+{
+	ALIST *newlist = malloc(sizeof(ALIST));
+
+	if (newlist != NULL)
+	{
+		newlist->Length = 0;
+		newlist->First = NULL;
+		newlist->Last = NULL;
+	}
+
+	assert(newlist);
+	
+	return newlist;
+}
+
+/*Delete Alive List*/
+
+void DeleteAliveList(ALIST *list)
+{
+	AENTRY *e, *n;
+
+	assert(list);
+
+	e = list ->first;
+	while(e)
+	{
+		n = e->Next;
+
+		Delete_Piece(e->AlivePiece);
+		
+		e->AlivePiece = NULL;
+		e->Prev = NULL;
+		e->Next = NULL;
+		e->List = NULL;
+
+		free(e)
+
+		e = n;	
+	}
+	
+	e=NULL;
+	free(list);
+	list = NULL;
+}
+
+/*Append Alive List*/
+
+void AppendAliveList(ALIST *list, PIECE *piece)
+{
+	assert(list);
+	assert(piece);
+
+	AENTRY *e = NULL;
+	e = (AENTRY*)malloc(sizeof(AENTRY));
+	assert(e);
+
+	e->list = list;
+	e->Next = NULL;
+	e->Prev = NULL;
+	e->AlivePiece = piece;
+
+	if (list->Last)
+	{
+		e->List = list;
+		e->Next = NULL;
+		e->Prev = list->Last;
+		list->Last->Next = e;
+		list->last = e;
+	}
+	else
+	{
+		e->List = list;
+		e->Next = NULL;
+		e->Prev = NULL;
+		list->First = e;
+		liest->Last = e;
+	}
+	list->Length++;
+}
+
+void RemoveAPiece(AENTRY *entry, ALIST *list)
+{
+	assert(entry);
+	assert(list);	
+
+	AENTRY *n = NULL;
+	AENTRY *p = NULL;
+		
+	n = entry->Next;
+	p = entry->Prev;
+
+	/*Fix pointers in next and prev entries*/
+	n->Prev = p;
+	p->Next = n;	
+
+	/*Handle case where the one being removed is first in list*/
+	if (p == NULL)
+	{
+		list->First = n;
+	}
+	/*Handle case where the one being removed is the last in list*/
+	if (n == NULL)
+	{
+		list->Last = p;
+	}
+
+	/*Remove the selected entry*/
+	Delete_Piece(e->AlivePiece);
+
+	entry->AlivePiece = NULL;
+	entry->Prev = NULL;
+	entry->Next = NULL;
+	entry->List = NULL;
+	
+	free(entry);
+
+	list->Length--;
+}

@@ -1,0 +1,9 @@
+CHECKERS
+Version: 1.1
+1/29/2018
+General Instructions:
+
+This is an alpha version of our chess program. In order to install our program, simply type "make" 
+after extracting the file, for more detailed instructions please see our INSTALL text file. Any 
+questions or concerns about the source code can be answered by seeing our Chess_SoftwareSpec.pdf
+file.

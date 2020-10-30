@@ -1,0 +1,81 @@
+# ############################################################
+# 01/20/2018  6:36pm Michael: formated header/ added variables
+# 01/22/2018 12:51am Cesar  : added default target, generate object files
+# 				and generate executables
+# 01/22/2018  2:39am Michael: added Obj files for FileIO.o/Locomotion.o
+# 01/25/2018 20:30pm Bianca : added GUI.c support
+# 01/29/2019 12:16am Tun    : add obj files for Legal.o, Alive.o
+# 01/29/019  01:22am Bianca : gui support
+# #############################################################
+
+# Variables
+CC = gcc
+DEBUG = -g -DDEBUG
+CFLAGS = -ansi -Wall -std=c99 -c
+LFLAGS = -ansi -Wall -std=c99
+
+# Libs
+GTKINC	= `PKG_CONFIG_PATH=/usr/share/pkgconfig pkg-config --cflags gtk+-2.0`
+GTKLIBS	= `PKG_CONFIG_PATH=/usr/share/pkgconfig pkg-config --libs gtk+-2.0`
+INC	= $(GTKINC)
+LIBS	= $(GTKLIBS)
+
+OPTS	= -g
+
+PROJECT	= gui
+
+test: ./BASICCHESS
+
+# Object Files
+Legal.o: Legal.c Legal.h
+	$(CC) $(CFLAGS) Legal.c -o Legal.o
+
+Check.o: Check.c Check.h
+	$(CC) $(CFLAGS) Check.c -o Check.o
+
+chessLayout.o: chessLayout.h chessLayout.c
+	$(CC) $(CFLAGS) chessLayout.c -o chessLayout.o
+
+Alive.o: Alive.c Alive.h chessLayout.h
+	$(CC) $(CFLAGS) Alive.c -o Alive.o
+
+AI.o: AI.c AI.h chessLayout.h move.h Alive.h
+	$(CC) $(CFLAGS) AI.c -o AI.o
+
+move.o: move.c move.h chessLayout.h
+	$(CC) $(CFLAGS) move.c -o move.o
+
+Main.o: Main.c chessLayout.h AI.h move.h Alive.h
+	$(CC) $(CFLAGS) Main.c -o Main.o
+
+gui.o: gui.c gui.h
+	gcc -c gui.c $(INC) $(OPTS) -o gui.o
+
+gui: gui.o
+	gcc gui.o $(LIBS) $(OPTS) -o gui
+
+#<<<<<<< Makefile
+basicChess.o: basicChess.c
+	$(CC) $(CFLAGS) basicChess.c -o basicChess.o
+
+Locomotion.o: Locomotion.h Alive.h chessLayout.h Locomotion.c
+	$(CC) $(CFLAGS) Locomotion.c -o Locomotion.o 
+#=======
+#basicChess.o: basicChess.c chessLayout.h chessLayout.c move.h
+#	$(CC) $(CFLAGS) basicChess.c -o  basicChess.o
+#>>>>>>> 1.10
+
+all: $(PROJECT)
+
+
+#################### Generate executables  ####################
+chess: chessLayout.o move.o Main.o FileIO.o Locomotion.o GUI.o Legal.o Alive.o
+	$(CC) $(LFLAGS) chessLayout.o move.o FileIO.o Locomotion.o Legal.o Alive.o Main.o -o Chess
+
+BASICCHESS: basicChess.o chessLayout.o move.o Locomotion.o Alive.o 
+	$(CC) $(LFLAGS) basicChess.o chessLayout.o move.o Locomotion.o Alive.o -o basicChess
+
+
+
+clean:
+	rm -rf *.o $(PROJECT)

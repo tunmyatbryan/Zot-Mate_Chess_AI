@@ -1,0 +1,495 @@
+/*
+Change Log:
+1/31 8:45 PM	-Tun 	- fully updated TestCheckLegal function
+*/
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "Check.h"
+
+
+/*
+This function will check that desire color king is under check or not
+If the king is under check, the move is not legal
+It will scan the whole board to find the king. Compare the type and color. Until it reaches the king with the DesireColor.
+It will use the king position[x][y].
+From the king position,
+(1) Check two space right up and left up for white king OR black king. If there is a different Queen or King or pawn or bishop, CheckFlag = 1.
+(2) Check diagonal right up, left up, right down and left down. If there is different color queen or bishop, CheckFlag = 1.
+(3) Check vertical and horizontal (right, left, up and down) in 4 direction. If there is different color queen or Rook, CheckFlag = 1.
+(4) Check the position for knight. If there is different color knight, CheckFlag = 1.
+(5) Return the CheckFlag.
+*/
+int TestCheckLegal(THEBOARD Board, int DesireColor)
+{
+	/*
+	scan Board[x][y] to find the king with DesireColor
+	CheckFlag = 1 means Desire King is under checked. The move is not legal
+	CheckFlag = 0 means Desire King is not under checked
+	*/	
+	int x, y, i, j, CheckFlag = 0;
+
+	//Create a new variable for King. ccP is current comparing piece. ccP will be compare with the King location.
+	PIECE *KingPiece = NULL;
+	PIECE *ccP;
+
+	//CopareType will compare the pieces with 'K'. CompareColor has to be same as DesireColor.
+	char CompareType;
+	int CompareColor;
+
+	//search the board x axis
+	for(i = 0; i <= 7; i++)
+	{
+		//search the board y axis
+		for(j = 0; j <= 7; i++)
+		{
+			/*
+			KingPiece is assigned by Board[x][y]. CompareType is assigned type we scan and CompareColor is assigned color we scan.
+			As soon as the king and Desire color is match, get out of the loop and use that x and y value of king position.
+			*/
+			KingPiece = Board[i][j];
+			CompareType = KingPiece->type;
+			CompareColor = KingPiece->color;
+			if(CompareType == 'K' && CompareColor == DesireColor)
+			{
+				x = i;
+				y = j;
+				i = 8;
+				j = 8;
+			}
+		}
+	}
+
+//return error message if x and y are out of bound
+	if(x < 0 || x >7 || y < 0 || y > 7)
+	{
+		printf("The value of x and y are not valid");
+		return 1;
+	}
+
+//start checking 1 space right up down and left up down for pawn, king, bishop and queen
+//It will check for both black and white pawns because black pawns move down and white pawns move up	
+	//checking 1 right up and 1 left up for black pawns for DesireColor white king	
+	if(DesireColor == 0 && y <= 6)
+	{
+		//checking right up 1 position
+		if(x < 7)
+		{
+			//reset the value for i and j. right up position from king position
+			i = x+1;
+			j = y+1;
+			ccP = Board[i][j];
+			if(ccP->color = 1 && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'K' || ccP->type == 'P' || ccP->type == 'B') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+		
+		//checking left up 1 position
+		if(x > 0)
+		{
+			//reset the value for i and j. left up position from king position
+			i = x-1;
+			j = y+1;
+			ccP = Board[i][j];
+			if(ccP->color = 1 && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'K' || ccP->type == 'P' || ccP->type == 'B') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+	}
+	
+	//checking 1 right down and 1 left down for white pawns for DesireColor black king	
+	if(DesireColor == 1 && y >= 1)
+	{
+		//checking right down 1 position
+		if(x < 7)
+		{
+			//reset the value for i and j. right down position from king position
+			i = x+1;
+			j = y-1;
+			ccP = Board[i][j];
+			if(ccP->color = 1 && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'K' || ccP->type == 'P' || ccP->type == 'B') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+		
+		//checking left down 1 position
+		if(x > 0)
+		{
+			//reset the value for i and j. left down position from king position
+			i = x-1;
+			j = y-1;
+			ccP = Board[i][j];
+			if(ccP->color = 1 && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'K' || ccP->type == 'P' || ccP->type == 'B') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+	}
+//end checking 1 space right up down and left up down for pawn, king, bishop and queen	
+
+
+//start checking for bishop diagonal
+		//checking right up diagonal for queen or bishop
+		if (x < 7 && y < 7 )
+		{
+			//reset i and j. Going right up [x++][y++]
+			i = x+1;
+			j = y+1;
+			
+			//check the space until it reach not NULL space.
+			while (Board[i][j] == NULL && i <= 7 && j <= 7) 
+			{
+				//assign the current position to ccP
+				ccP = Board[i][j];
+				i++;
+				j++;
+			}
+			
+			//check the last not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is Queen or bishop.
+			if(ccP->color != DesireColor && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'B') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+		
+		//checking left up diagonal for queen or bishop
+		if (x > 0 && y < 7 ) 
+		{
+			//reset i and j. Going left up [x--][y++]
+			i = x-1;
+			j = y+1;
+			
+			//check the space until it reach not NULL space.
+			while (Board[i][j] == NULL && i >= 0 && j <= 7) 
+			{
+				//assign the current position to ccP
+				ccP = Board[i][j];
+				i--;
+				j++;
+			}
+			
+			//check the last not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is Queen or bishop.
+			if(ccP->color != DesireColor && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'B') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}		
+		
+		//checking left down diagonal for queen or bishop
+		if (x > 0 && y > 0 ) 
+		{
+			//reset i and j. Going left up [x--][y--]
+			i = x-1;
+			j = y-1;
+			
+			//check the space until it reach not NULL space.
+			while (Board[i][j] == NULL && i >= 0 && j >= 0) 
+			{
+				//assign the current position to ccP
+				ccP = Board[i][j];
+				i--;
+				j--;
+			}
+			
+			//check the last not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is Queen or bishop.
+			if(ccP->color != DesireColor && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'B') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}		
+		
+		//checking right down diagonal for queen or bishop
+		if (x < 7 && y > 0 ) 
+		{
+			//reset i and j. Going left up [x++][y--]
+			i = x+1;
+			j = y-1;
+			
+			//check the space until it reach not NULL space.
+			while (Board[i][j] == NULL && i <= 7 && j >= 0) 
+			{
+				//assign the current position to ccP
+				ccP = Board[i][j];
+				i++;
+				j--;
+			}
+			
+			//check the last not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is Queen or bishop.
+			if(ccP->color != DesireColor && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'B') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}			
+//end checking diagonal for bishop and queen
+
+
+//start checking horizontal and vertical for Rook
+
+		//checking down vertical for queen or Rook
+		if ( y > 0 ) 
+		{
+			//reset i and j. Going down [x][y--]
+			i = x;
+			j = y-1;
+			
+			//check the space until it reach not NULL space.
+			while (Board[i][j] == NULL && j >= 0) 
+			{
+				//assign the current position to ccP
+				ccP = Board[i][j];
+				j--;
+			}
+			
+			//check the last not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is Queen or Rook.
+			if(ccP->color != DesireColor && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'R') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+		
+		//checking up vertical for queen or Rook
+		if ( y < 7 ) 
+		{
+			//reset i and j. Going down [x][y--]
+			i = x;
+			j = y+1;
+			
+			//check the space until it reach not NULL space.
+			while (Board[i][j] == NULL && j <= 7) 
+			{
+				//assign the current position to ccP
+				ccP = Board[i][j];
+				j++;
+			}
+			
+			//check the last not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is Queen or Rook.
+			if(ccP->color != DesireColor && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'R') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+
+		//checking right horizontal for queen or bishop
+		if ( x < 7 ) 
+		{
+			//reset i and j. Going down [x][y--]
+			i = x+1;
+			j = y;
+			
+			//check the space until it reach not NULL space.
+			while (Board[i][j] == NULL && i <= 7) 
+			{
+				//assign the current position to ccP
+				ccP = Board[i][j];
+				i++;
+			}
+			
+			//check the last not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is Queen or bishop.
+			if(ccP->color != DesireColor && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'R') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+
+		//checking left horizontal for queen or bishop
+		if ( x > 0 ) 
+		{
+			//reset i and j. Going down [x][y--]
+			i = x-1;
+			j = y;
+			
+			//check the space until it reach not NULL space.
+			while (Board[i][j] == NULL && i >= 0) 
+			{
+				//assign the current position to ccP
+				ccP = Board[i][j];
+				i--;
+			}
+			
+			//check the last not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is Queen or bishop.
+			if(ccP->color != DesireColor && Board[i][j] != NULL && (ccP->type == 'Q' || ccP->type == 'R') )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+//end checking vertical and horizontal for bishop and rook
+
+//start checking 2+1 space for Knight
+
+		//checking two up one right: x+1 and y+2 for Knight
+		if ( x <= 6 && y <= 5) 
+		{
+			//reset i and j. Going to [x+1][y+2]
+			i = x+1;
+			j = y+2;
+			ccP = Board[i][j];
+			//check that is not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is knight. Knight is H
+			if(Board[i][j] != NULL && ccP->color != DesireColor &&  ccP->type == 'H' )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+		
+		//checking two up one left: x-1 and y+2 for Knight
+		if ( x >= 1 && y <= 5) 
+		{
+			//reset i and j. Going to [x-1][y+2]
+			i = x-1;
+			j = y+2;
+			ccP = Board[i][j];
+			//check that is not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is knight. Knight is H
+			if(Board[i][j] != NULL && ccP->color != DesireColor &&  ccP->type == 'H' )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+
+		//checking one up two right: x+2 and y+1 for Knight
+		if ( x <= 1 && y <= 6) 
+		{
+			//reset i and j. Going to [x+2][y+1]
+			i = x+2;
+			j = y+1;
+			ccP = Board[i][j];
+			//check that is not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is knight. Knight is H
+			if(Board[i][j] != NULL && ccP->color != DesireColor &&  ccP->type == 'H' )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+
+		//checking one up two left: x-2 and y+1 for Knight
+		if ( x >= 2 && y <= 6) 
+		{
+			//reset i and j. Going to [x-2][y+1]
+			i = x-2;
+			j = y+1;
+			ccP = Board[i][j];
+			//check that is not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is knight. Knight is H
+			if(Board[i][j] != NULL && ccP->color != DesireColor &&  ccP->type == 'H' )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+
+		//checking two down one right: x+1 and y-2 for Knight
+		if ( x <= 6 && y >= 2) 
+		{
+			//reset i and j. Going to [x+1][y-2]
+			i = x+1;
+			j = y-2;
+			ccP = Board[i][j];
+			//check that is not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is knight. Knight is H
+			if(Board[i][j] != NULL && ccP->color != DesireColor &&  ccP->type == 'H' )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+
+		//checking two down one left: x-1 and y-2 for Knight
+		if ( x >= 1 && y >= 2) 
+		{
+			//reset i and j. Going to [x-1][y-2]
+			i = x-1;
+			j = y-2;
+			ccP = Board[i][j];
+			//check that is not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is knight. Knight is H
+			if(Board[i][j] != NULL && ccP->color != DesireColor &&  ccP->type == 'H' )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+
+		//checking one down two right: x+2 and y-1 for Knight
+		if ( x <= 5 && y >= 1) 
+		{
+			//reset i and j. Going to [x+2][y-1]
+			i = x+2;
+			j = y-1;
+			ccP = Board[i][j];
+			//check that is not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is knight. Knight is H
+			if(Board[i][j] != NULL && ccP->color != DesireColor &&  ccP->type == 'H' )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+
+		//checking one down two left: x-2 and y-1 for Knight
+		if ( x >= 2 && y >= 1) 
+		{
+			//reset i and j. Going to [x-2][y-1]
+			i = x-2;
+			j = y-1;
+			ccP = Board[i][j];
+			//check that is not NULL space. If the space is occupied the enemy, it can be capture.
+			//current color is not the same with the occupied color. If the piece is knight. Knight is H
+			if(Board[i][j] != NULL && ccP->color != DesireColor &&  ccP->type == 'H' )
+			{
+				CheckFlag = 1;
+				return CheckFlag;
+			}
+		}
+//end checking horizontal and vertical for Rook
+
+	//if the checking conditions are all clear, CheckFlag = 0 and return. It means legal check move.
+	return CheckFlag;
+}
+
+/*
+	Verifies recent move by "color" does not put "color in check
+	return type
+		0 - Not in check aka legal move
+		1 - In check aka illegal
+*/
+
+
+
+int TestCheckMate(THEBOARD Board, int color, ALIST *white, ALIST *black)
+{
+	return 0;
+}
+/*
+	Verifies "color" is in Check or Mate or neither. Function called at the end of a move
+	return type
+		0 - No check or mate
+		1 - "color" in check
+		2 - "color" in Mate
+*/

@@ -1,0 +1,72 @@
+/*
+*As of 1/31, this module has two functions:
+*	1. 	TestCheck verifies the legality of a recent move -> makes sure player doesnt
+*			Check him.herslef
+*	2.	TestCheckMate verifies the passed player color (as a param) is in check, then checkmate
+*			return values: 0 - not in check; 1 - in check; 2 - in mate
+*
+*	*ChangeLog*
+*	1/31	12PM	Reza	- Initial File setup
+	2/1	5:56PM	Tun	- Change the fuction name TestCheckLegalCheckMate to TestCheckLegalAttacker
+				- Add new function for TestCheckLegalBlocker to find the available blocker
+*/
+#ifndef CHECK_H
+#define CHECK_H
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h> //just in case
+
+/*
+include proper dependencies here
+*/
+#include "FileIO.h"
+#include "Locomotion.h"
+#include "Alive.h"
+#include "Legal.h"
+#include "chessLayout.h"
+#include "move.h"
+
+//Func Declarations
+int TestCheckLegal(THEBOARD Board, int DesireColor);
+/*
+	Verifies recent move by "color" does not put "color in check
+	return type
+		0 - Not in check aka legal move
+		1 - In check aka illegal
+*/
+
+
+
+int TestCheckMate(THEBOARD Board, int color, ALIST *white, ALIST *black);
+/*
+	Verifies "color" is in Check or Mate or neither. Function called at the end of a move
+	return type
+		0 - No check or mate
+		1 - "color" in check
+		2 - "color" in Mate
+*/
+
+PIECE *TestCheckLegalAttacker(THEBOARD Board, int DesireColor);
+/*
+	Verifies if DesireColor is in Check for the TestCheckMate Function
+		NULL - No Piece points to desireColor's king
+		if not NULL; returns a pointer to the attacker as a piece ptr
+		
+*/
+		
+PIECE *TestCheckLegalBlocker(THEBOARD Board, int DesireColor, int DesireX, int DesireY);
+/*
+When the king is under check and there is no space to move to get out of check. So we want to find a blocker.
+The function will receive value of X and Y position of available position.
+The function will find the same color piece as DesireColor.
+If there is a piece that can come to the given position X and Y. Then, block the attack from the check. 
+		NULL - No Piece is availabe to block
+		if not NULL; returns a pointer to the blocker as a piece ptr
+		
+*/
+
+
+
+
+#endif

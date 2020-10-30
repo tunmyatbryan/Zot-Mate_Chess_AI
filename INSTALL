@@ -1,0 +1,14 @@
+Installation Instructions:
+
+To install our chess program, first start your computers linux
+terminal. Then exract the file by typing the command:
+                tar -xvzf  ZotMate_Alpha_src.tar.gz
+After extracting the file, go into the bin directory ("cd bin")
+where you'll be able to access the game. You can make sure the file is
+executable by typing "chmod +x Zotmate".
+Now type "make all" and afterwards do "./Zotmate"
+Congradulations, you have successfuly installed and ran
+Zotmate.
+In order to acces our sorce code, go in the src directory ("cd src"). There
+you may freely view our code. Any concerns regarding the legality's of using
+our code can be found in the COPYRIGHT.txt file. 

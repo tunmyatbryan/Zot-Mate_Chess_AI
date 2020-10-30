@@ -1,0 +1,33 @@
+General Instructions:
+
+Welcome to Zotmate, created by Checkers. In order to use our chess game, you must first install
+the program. Instructions on downloading, and starting the game can be found in the INSTALL.txt
+file. After installing and starting the game, the general board layout will pop up, and you will be
+allowed to type and play the game. Any questions regarding the game of chess, or a more elaborate
+understanding of our chess software can be found in our Chess_Usermanual.pdf inside the doc
+directory. The sourse code can be found in the src directory. Any questions regarding the source code,
+or a more elaborate understanding of the code can be found in the Software_Specs.pdf in the doc 
+directory. Any concerns regarding legal matters can be found in our COPYRIGHT.txt file. 
+Enjoy our chess Program.
+
+Included directories and files:
+-README.txt     : General Instructions for the game
+-INSTALL.txt    : Installations Instructions for the game
+-COPYRIGHT.txt  : Legality surrounding the chess program
+-doc/           : Directory containing the User Manuel
+-Chess_UserManuel.pdf
+-Software_Specs.pdf
+-bin/           : Directory holding the game
+-src/		: Directory holding the source code
+-ChessLayout.o
+-Moves.o
+-Alive.o
+-AI.o
+-GUI.o
+-FileIO.o
+-Locomotion.o
+-Psuedocode.o
+-Legal.o
+-check.o
+-checkMateTest.o
+-Makefile
